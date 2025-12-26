@@ -1,0 +1,2 @@
+colorama>=0.4.4
+win10toast>=0.9; sys_platform == "win32"
