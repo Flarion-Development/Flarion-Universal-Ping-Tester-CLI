@@ -114,14 +114,25 @@ class OperatingSystem:
         else:
             return "Unknown"
 
-    def display_system_info(self) -> None:
+    def display_system_info(self, locale=None) -> None:
         """Display formatted system information to the console."""
-        print("System Information:")
-        print(
-            f"{Fore.GREEN}Operating System Family: {Fore.YELLOW}{self.name}{Style.RESET_ALL}"
-        )
-        
-        kernel_info = self.get_kernel_version()
-        print(f"{Fore.GREEN}Kernel: {Fore.YELLOW}{kernel_info}{Style.RESET_ALL}")
-        
-        print(f"{Fore.GREEN}Distribution: {Fore.YELLOW}{self.distro}{Style.RESET_ALL}")
+        if locale is None:
+            print("System Information:")
+            print(
+                f"{Fore.GREEN}Operating System Family: {Fore.YELLOW}{self.name}{Style.RESET_ALL}"
+            )
+            
+            kernel_info = self.get_kernel_version()
+            print(f"{Fore.GREEN}Kernel: {Fore.YELLOW}{kernel_info}{Style.RESET_ALL}")
+            
+            print(f"{Fore.GREEN}Distribution: {Fore.YELLOW}{self.distro}{Style.RESET_ALL}")
+        else:
+            print(locale.get('system_info'))
+            print(
+                f"{Fore.GREEN}{locale.get('os_family')}: {Fore.YELLOW}{self.name}{Style.RESET_ALL}"
+            )
+            
+            kernel_info = self.get_kernel_version()
+            print(f"{Fore.GREEN}{locale.get('kernel')}: {Fore.YELLOW}{kernel_info}{Style.RESET_ALL}")
+            
+            print(f"{Fore.GREEN}{locale.get('distribution')}: {Fore.YELLOW}{self.distro}{Style.RESET_ALL}")
