@@ -1,9 +1,11 @@
 """Main CLI application for the Flarion Universal Ping Tester."""
 
 import asyncio
+import os
 import sys
 from typing import Dict, List, Optional
 
+from Classes.Locale import Locale
 from Classes.OperatingSystem import OperatingSystem
 from Classes.Server import Server
 
@@ -17,45 +19,56 @@ class PingTesterApp:
         """Initialize the application."""
         self.os_info = OperatingSystem()
         self.server = Server()
+        self.locale = Locale()
+    
+    def clear_console(self) -> None:
+        """Clear the console screen."""
+        os.system('cls' if os.name == 'nt' else 'clear')
 
     async def initialize(self) -> None:
         """Initialize the application and display system information."""
-        self.os_info.display_system_info()
+        self.clear_console()
+        self.os_info.display_system_info(locale=self.locale)
         await asyncio.sleep(1)
 
     def display_main_menu(self) -> None:
         """Display the main menu options."""
-        print("\nWelcome to Flarion Universal Ping Tester CLI!")
-        print("\nSelect an option:")
-        print("1. List Internet Service Providers")
-        print("2. List Game Servers")
-        print("3. Custom")
-        print("4. Exit")
+        self.clear_console()
+        print(f"\n{self.locale.get('welcome')}")
+        print(f"\n{self.locale.get('select_option')}")
+        print(f"1. {self.locale.get('list_isp')}")
+        print(f"2. {self.locale.get('list_game')}")
+        print(f"3. {self.locale.get('custom')}")
+        print(f"4. {self.locale.get('exit')}")
 
     def handle_datacenter_menu(self) -> None:
         """Handle the datacenter/ISP selection menu."""
         countries = self.server.get_countries(self.JSON_FILES["datacenter"])
 
         if not countries:
-            print("No countries available in data.")
+            print(self.locale.get("no_countries"))
+            input(f"\n{self.locale.get('press_enter')}")
             return
 
-        print("\nAvailable Countries:")
+        self.clear_console()
+        print(f"\n{self.locale.get('available_countries')}")
         for i, country in enumerate(countries, 1):
             print(f"{i}. {country}")
 
         try:
-            country_choice = input("Select a country (number): ")
+            country_choice = input(self.locale.get("select_country") + " ")
             country_index = int(country_choice) - 1
 
             if 0 <= country_index < len(countries):
                 selected_country = countries[country_index]
                 self.handle_server_selection(selected_country)
             else:
-                print("Invalid country selection.")
+                print(self.locale.get("invalid_country"))
+                input(f"\n{self.locale.get('press_enter')}")
 
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print(self.locale.get("invalid_input"))
+            input(f"\n{self.locale.get('press_enter')}")
 
     def handle_server_selection(self, country: str) -> None:
         """Handle server selection for a given country.
@@ -68,41 +81,50 @@ class PingTesterApp:
         )
 
         if not servers:
-            print(f"No servers found in {country}.")
+            print(self.locale.get("no_servers", country=country))
+            input(f"\n{self.locale.get('press_enter')}")
             return
 
-        print(f"\nServers in {country}:")
+        self.clear_console()
+        print(f"\n{self.locale.get('servers_in', country=country)}:")
         for i, server in enumerate(servers, 1):
             print(f"{i}. {server.name} ({server.ip_address})")
 
-        server_choice = input("Select a server to ping (number) or 'back': ")
+        server_choice = input(self.locale.get("select_server") + " ")
 
         if server_choice.lower() != "back":
             try:
                 server_index = int(server_choice) - 1
                 if 0 <= server_index < len(servers):
                     selected_server = servers[server_index]
-                    print(f"\nPinging {selected_server.name}...")
+                    self.clear_console()
+                    print(
+                        f"\n{self.locale.get('pinging', server_name=selected_server.name)}..."
+                    )
                     selected_server.ping()
-                    
-                    input("\nPress Enter to return to main menu...")
+
+                    input(f"\n{self.locale.get('press_enter')}")
                     return
                 else:
-                    print("Invalid server selection.")
+                    print(self.locale.get("invalid_server"))
             except ValueError:
-                print("Invalid input. Please enter a number.")
+                print(self.locale.get("invalid_input"))
 
     def handle_game_menu(self) -> None:
         """Handle the game servers menu."""
-        print("Game servers feature is not implemented yet.")
+        self.clear_console()
+        print(self.locale.get("game_not_implemented"))
+        input(f"\n{self.locale.get('press_enter')}")
 
     def handle_custom_menu(self) -> None:
         """Handle the custom ping menu."""
-        print("Custom ping feature is not implemented yet.")
+        self.clear_console()
+        print(self.locale.get("custom_not_implemented"))
+        input(f"\n{self.locale.get('press_enter')}")
 
     def handle_exit(self) -> None:
         """Handle application exit."""
-        print("Thank you for using Flarion Universal Ping Tester!")
+        print(self.locale.get("thank_you"))
         self._show_exit_notification()
 
     def _show_exit_notification(self) -> None:
@@ -150,7 +172,7 @@ class PingTesterApp:
         while True:
             try:
                 self.display_main_menu()
-                choice = input("Enter your choice: ").lower()
+                choice = input(self.locale.get("enter_choice") + " ").lower()
 
                 if choice in {"1", "datacenter"}:
                     self.handle_datacenter_menu()
@@ -162,14 +184,14 @@ class PingTesterApp:
                     self.handle_exit()
                     break
                 else:
-                    print("Invalid choice. Please try again.")
+                    print(self.locale.get("invalid_choice"))
 
             except KeyboardInterrupt:
-                print("\n\nExiting application...")
+                print(f"\n\n{self.locale.get('exiting')}")
                 self.handle_exit()
                 break
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                print(self.locale.get("unexpected_error", error=e))
 
 
 async def main() -> None:
