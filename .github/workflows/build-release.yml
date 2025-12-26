@@ -39,33 +39,39 @@ jobs:
         
     - name: Create release directory and copy files
       run: |
-        mkdir release
-        mkdir release\Data
-        copy dist\Flarion-Ping-Tester.exe release\
-        copy Data\datacenters.json release\Data\
-        copy LICENSE release\ 2>nul
-        echo # Flarion Universal Ping Tester CLI > release\README.md
-        echo. >> release\README.md
-        echo A command-line tool for testing ping connectivity to various servers worldwide. >> release\README.md
-        echo. >> release\README.md
-        echo ## Usage >> release\README.md
-        echo Run Flarion-Ping-Tester.exe to start the application. >> release\README.md
+        New-Item -ItemType Directory -Path "release" -Force
+        New-Item -ItemType Directory -Path "release\Data" -Force
+        Copy-Item "dist\Flarion-Ping-Tester.exe" "release\" -Force
+        Copy-Item "Data\datacenters.json" "release\Data\" -Force
+        if (Test-Path "LICENSE") { Copy-Item "LICENSE" "release\" -Force }
+        Set-Content -Path "release\README.md" -Value "# Flarion Universal Ping Tester CLI"
+        Add-Content -Path "release\README.md" -Value ""
+        Add-Content -Path "release\README.md" -Value "A command-line tool for testing ping connectivity to various servers worldwide."
+        Add-Content -Path "release\README.md" -Value ""
+        Add-Content -Path "release\README.md" -Value "## Usage"
+        Add-Content -Path "release\README.md" -Value "Run Flarion-Ping-Tester.exe to start the application."
+        Add-Content -Path "release\README.md" -Value ""
+        Add-Content -Path "release\README.md" -Value "## Features"
+        Add-Content -Path "release\README.md" -Value "- Test ping to various datacenters worldwide"
+        Add-Content -Path "release\README.md" -Value "- Country-based server selection"
+        Add-Content -Path "release\README.md" -Value "- Interactive CLI interface"
+        Add-Content -Path "release\README.md" -Value "- System information display"
         
     - name: Get version
       id: get_version
       run: |
-        if ("${{ github.event_name }}" -eq "workflow_dispatch") {
-          echo "version=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
+        if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+          echo "version=${{ github.event.inputs.version }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         } else {
-          $version = "${{ github.ref }}" -replace "refs/tags/v", ""
-          echo "version=$version" >> $env:GITHUB_OUTPUT
+          $version = '${{ github.ref }}' -replace 'refs/tags/v', ''
+          echo "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         }
       shell: powershell
         
     - name: Create ZIP archive
       run: |
         cd release
-        7z a "../Flarion-Ping-Tester-v${{ steps.get_version.outputs.version }}.zip" *
+        Compress-Archive -Path "*" -DestinationPath "../Flarion-Ping-Tester-v${{ steps.get_version.outputs.version }}.zip" -Force
         
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
