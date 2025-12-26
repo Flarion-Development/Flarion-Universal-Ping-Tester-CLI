@@ -35,7 +35,7 @@ jobs:
         
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller --onefile --windowed --name "Flarion-Ping-Tester" --icon=icon.ico --add-data "Data;Data" main.py
+        pyinstaller --onefile --console --name "Flarion-Ping-Tester" --add-data "Data;Data" main.py
         
     - name: Create release directory
       run: |
