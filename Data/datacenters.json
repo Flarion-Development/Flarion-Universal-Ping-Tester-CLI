@@ -1,0 +1,39 @@
+{
+  "datacenter": {
+    "kuzey": {
+      "id": 1,
+      "name": "Kuzey Datacenter",
+      "country": "Turkey",
+      "city": "Istanbul",
+      "ip": "154.53.161.7"
+    },
+    "mars": {
+      "id": 2,
+      "name": "Teknet Veri Merkezi Hizmetleri (AS57152)",
+      "country": "Turkey",
+      "city": "Antalya",
+      "ip": "31.7.38.1"
+    },
+    "datacasa": {
+      "id": 3,
+      "name": "Datacasa Datacenter",
+      "country": "Turkey",
+      "city": "Istanbul",
+      "ip": "185.112.74.106"
+    },
+    "teknotel": {
+      "id": 4,
+      "name": "Teknotel Datacenter",
+      "country": "Turkey",
+      "city": "Istanbul",
+      "ip": "213.144.97.201"
+    },
+    "turknet": {
+      "id": 5,
+      "name": "Turknet Datacenter",
+      "country": "Turkey",
+      "city": "Istanbul",
+      "ip": "193.192.120.145"
+    }
+  }
+}
