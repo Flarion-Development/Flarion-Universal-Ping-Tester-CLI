@@ -37,18 +37,19 @@ jobs:
       run: |
         pyinstaller --onefile --console --name "Flarion-Ping-Tester" --add-data "Data;Data" main.py
         
-    - name: Create release directory
+    - name: Create release directory and copy files
       run: |
         mkdir release
+        mkdir release\Data
         copy dist\Flarion-Ping-Tester.exe release\
         copy Data\datacenters.json release\Data\
-        copy LICENSE release\
+        copy LICENSE release\ 2>nul
         echo # Flarion Universal Ping Tester CLI > release\README.md
         echo. >> release\README.md
         echo A command-line tool for testing ping connectivity to various servers worldwide. >> release\README.md
         echo. >> release\README.md
         echo ## Usage >> release\README.md
-        echo Run \`Flarion-Ping-Tester.exe\` to start the application. >> release\README.md
+        echo Run Flarion-Ping-Tester.exe to start the application. >> release\README.md
         
     - name: Get version
       id: get_version
