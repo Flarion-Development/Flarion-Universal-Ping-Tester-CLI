@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "*.*.*"
   workflow_dispatch:
     inputs:
       version:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Build executable with PyInstaller
         run: |
-          pyinstaller --onefile --console --name "Flarion-Ping-Tester" --add-data "Data;Data" main.py
+          pyinstaller --onefile --console --name "Flarion-Ping-Tester" --add-data "Data;Data" --add-data "Locale;Locale" main.py
 
       - name: Get version
         id: get_version
@@ -52,8 +52,11 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path "release" -Force
           New-Item -ItemType Directory -Path "release\Data" -Force
+          New-Item -ItemType Directory -Path "release\Locale" -Force
           Copy-Item "dist\Flarion-Ping-Tester.exe" "release\" -Force
           if (Test-Path "Data\datacenters.json") { Copy-Item "Data\datacenters.json" "release\Data\" -Force }
+          if (Test-Path "Locale\en.yml") { Copy-Item "Locale\en.yml" "release\Locale\" -Force }
+          if (Test-Path "Locale\tr.yml") { Copy-Item "Locale\tr.yml" "release\Locale\" -Force }
           # README oluşturma kısmı (mevcut kodunuzla aynı kalabilir)
           Set-Content -Path "release\README.md" -Value "# Flarion Universal Ping Tester CLI`n`nA command-line tool..."
 
